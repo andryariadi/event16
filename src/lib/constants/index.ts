@@ -1,3 +1,18 @@
+export const navLinks = [
+  {
+    label: "Home",
+    href: "/",
+  },
+  {
+    label: "Events",
+    href: "/events",
+  },
+  {
+    label: "Create Event",
+    href: "/create-event",
+  },
+];
+
 export const events = [
   {
     slug: "react-conf-2024",

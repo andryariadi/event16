@@ -1,11 +1,16 @@
 import EventCard from "@/components/EventCard";
 import ExploreBtn from "@/components/ExploreBtn";
 import SplitText from "@/components/SplitText";
-import { events } from "@/lib/constants";
+import { IEvent } from "@/database";
 
-export default function Home() {
+export default async function Home() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events`);
+  const { events } = await res.json();
+
+  console.log({ events }, "<---homePage");
+
   return (
-    <section className="b-rose-500">
+    <section className="b-rose-500 min-h-[calc(100vh+18rem)]">
       {/* Heading */}
       <h1 className="text-center font-bold">
         <SplitText
@@ -38,7 +43,7 @@ export default function Home() {
         <ul className="events">
           {events &&
             events.length > 0 &&
-            events.map((event) => (
+            events.map((event: IEvent) => (
               <li key={event.slug} className="list-none">
                 <EventCard {...event} />
               </li>

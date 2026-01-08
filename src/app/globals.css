@@ -246,11 +246,11 @@
 
   #event {
     .header {
-      @apply flex w-2/3 flex-col items-start gap-4 max-lg:w-full mb-10;
+      @apply w-2/3 max-lg:w-full flex flex-col items-start gap-4 mb-10;
     }
 
     .details {
-      @apply flex w-full flex-col lg:flex-row gap-12 items-start mt-12 max-lg:items-center;
+      @apply w-full flex flex-col lg:flex-row gap-12 items-start mt-12 max-lg:items-center;
 
       .content {
         @apply flex flex-[2] flex-col gap-8 max-lg:w-full;
@@ -271,7 +271,7 @@
       }
 
       .booking {
-        @apply flex-1 w-full p-4 border-l border-gray-700;
+        @apply flex-1 w-full md:px-4;
 
         .signup-card {
           @apply bg-dark-100 border-dark-200 card-shadow flex w-full flex-col gap-6 rounded-[10px] border px-5 py-6;
@@ -294,10 +294,10 @@
     .flex-row-gap-2 {
       @apply flex flex-row gap-2;
     }
-  }
 
-  .pill {
-    @apply bg-dark-100 text-light-100 text-xs rounded-[6px] px-5 py-2;
+    .pill {
+      @apply bg-dark-100 text-light-100 text-xs rounded-[6px] px-5 py-2;
+    }
   }
 
   #book-event {
@@ -315,7 +315,7 @@
       }
 
       button {
-        @apply bg-primary hover:bg-primary/90 w-full cursor-pointer items-center justify-center rounded-[6px] px-4 py-2.5 text-lg font-semibold text-black;
+        @apply bg-[#59DECA] hover:bg-primary/90 w-full cursor-pointer items-center justify-center rounded-[6px] px-4 py-2.5 text-lg font-semibold text-black;
       }
     }
   }

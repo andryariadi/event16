@@ -1,9 +1,18 @@
-import React from 'react'
+import EventDetails from "@/components/EventDetails";
+import { Suspense } from "react";
 
-const EventDetailPage = () => {
+const EventDetailPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const slug = params.then((p) => p.slug);
+
+  console.log(slug);
+
   return (
-    <div>EventDetailPage</div>
-  )
-}
+    <section className="b-amber-600">
+      <Suspense fallback={<div>Loading event details...</div>}>
+        <EventDetails params={slug} />
+      </Suspense>
+    </section>
+  );
+};
 
-export default EventDetailPage
+export default EventDetailPage;

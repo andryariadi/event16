@@ -3,6 +3,8 @@ import { Martian_Mono, Schibsted_Grotesk } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import LightRays from "@/components/LightRays";
+import { Suspense } from "react";
+import NavbarSkeleton from "@/components/skeleton/NavbarSkeleton";
 
 const schibstedGrotesk = Schibsted_Grotesk({
   variable: "--font-schibsted-grotesk",
@@ -27,7 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${schibstedGrotesk.variable} ${martianMono.variable} antialiased min-h-screen`}>
-        <Navbar />
+        <Suspense fallback={<NavbarSkeleton />}>
+          <Navbar />
+        </Suspense>
 
         {/* Background */}
         <div className="b-rose-500 absolute inset-0 z-[-1] top-0 min-h-screen">

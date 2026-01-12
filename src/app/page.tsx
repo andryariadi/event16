@@ -1,14 +1,37 @@
 import EventCard from "@/components/EventCard";
 import ExploreBtn from "@/components/ExploreBtn";
+import EventsGridSkeleton from "@/components/skeleton/EventCardSkeleton";
 import SplitText from "@/components/SplitText";
 import { IEvent } from "@/database";
+import { cacheLife } from "next/cache";
+import { Suspense } from "react";
 
-export default async function Home() {
+const EventList = async () => {
+  "use cache";
+  cacheLife("hours");
+
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events`);
   const { events } = await res.json();
 
-  console.log({ events }, "<---homePage");
+  return (
+    <div id="events" className="b-purple-500 mt-20 space-y-7">
+      <h3>Featured Events</h3>
+      {events.length > 0 ? (
+        <ul className="events">
+          {events.map((event: IEvent) => (
+            <li key={event.slug} className="list-none">
+              <EventCard {...event} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-center text-gray-500">No events available</p>
+      )}
+    </div>
+  );
+};
 
+export default async function Home() {
   return (
     <section className="b-rose-500 min-h-[calc(100vh+18rem)]">
       {/* Heading */}
@@ -37,19 +60,9 @@ export default async function Home() {
       <ExploreBtn />
 
       {/* Events Section */}
-      <div id="events" className="b-purple-500 mt-20 space-y-7">
-        <h3>Featured Events</h3>
-
-        <ul className="events">
-          {events &&
-            events.length > 0 &&
-            events.map((event: IEvent) => (
-              <li key={event.slug} className="list-none">
-                <EventCard {...event} />
-              </li>
-            ))}
-        </ul>
-      </div>
+      <Suspense fallback={<EventsGridSkeleton count={3} />}>
+        <EventList />
+      </Suspense>
     </section>
   );
 }

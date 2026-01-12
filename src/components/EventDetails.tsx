@@ -3,6 +3,8 @@ import EventCard from "./EventCard";
 import { getSimilarEventsBySlug } from "@/lib/actions/events.action";
 import { IEvent } from "@/database";
 import BookEvent from "./BookEvent";
+import { notFound } from "next/navigation";
+import { cacheLife } from "next/cache";
 
 const EventDetailItem = ({ icon, alt, label }: { icon: string; alt: string; label: string }) => (
   <div className="flex-row-gap-2 items-center">
@@ -11,16 +13,20 @@ const EventDetailItem = ({ icon, alt, label }: { icon: string; alt: string; labe
   </div>
 );
 
-const EventAgenda = ({ agendaItems }: { agendaItems: string[] }) => (
-  <div className="agenda">
-    <h2>Agenda</h2>
-    <ul className="space-y-2">
-      {agendaItems.map((item) => (
-        <li key={item}>{item}</li>
-      ))}
-    </ul>
-  </div>
-);
+const EventAgenda = ({ agendaItems }: { agendaItems: string[] }) => {
+  const filterAgenda = agendaItems.filter((item) => item && item.trim() !== "");
+
+  return (
+    <div className="agenda">
+      <h2>Agenda</h2>
+      <ul className="space-y-2">
+        {filterAgenda.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
 const EventTags = ({ tags }: { tags: string[] }) => (
   <div className="flex flex-row gap-1.5 flex-wrap">
@@ -33,18 +39,32 @@ const EventTags = ({ tags }: { tags: string[] }) => (
 );
 
 const EventDetails = async ({ params }: { params: Promise<string> }) => {
+  "use cache";
+  cacheLife("hours");
+
   const slug = await params;
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events/${slug}`);
+
+  // Handle 404 and other errors
+  if (!res.ok) {
+    if (res.status === 404) {
+      return notFound();
+    }
+    throw new Error(`Failed to fetch event: ${res.statusText}`);
+  }
+
   const { event } = await res.json();
 
-  const { description, image, overview, date, time, location, mode, agenda, audience, tags, organizer } = event;
+  if (!event) {
+    return notFound();
+  }
+
+  const { title, description, image, overview, date, time, location, mode, agenda, audience, tags, organizer } = event;
 
   const similarEvents: IEvent[] = await getSimilarEventsBySlug(slug);
 
   const bookings = 10;
-
-  console.log({ event }, "<---eventDetailPage");
 
   return (
     <div id="event" className="b-fuchsia-500">
@@ -58,7 +78,7 @@ const EventDetails = async ({ params }: { params: Promise<string> }) => {
       <div className="b-yellow-500 details">
         {/* Left side - Event Content */}
         <div className="b-blue-500 content">
-          <Image src={event.image} alt={event.title} width={800} height={800} className="banner" />
+          <Image src={image} alt={title} width={800} height={800} className="banner" />
 
           {/* Overview */}
           <section className="space-y-2">
